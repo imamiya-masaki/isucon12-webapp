@@ -24,7 +24,11 @@ func initializeSQLLogger() (string, io.Closer, error) {
 
 	traceLogFile, err := os.OpenFile(traceFilePath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0600)
 	if err != nil {
-		return "", nil, fmt.Errorf("cannot open ISUCON_SQLITE_TRACE_FILE: %w", err)
+		os.Create(traceFilePath)
+		traceLogFile, err = os.OpenFile(traceFilePath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0600)
+		if err != nil {
+			return "", nil, fmt.Errorf("cannot open ISUCON_SQLITE_TRACE_FILE: %w", err)
+		}
 	}
 
 	traceLogEncoder = json.NewEncoder(traceLogFile)
